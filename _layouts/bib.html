@@ -5,9 +5,25 @@
         <div class="col-sm-2 {% if entry.preview %}preview{% else %}abbr{% endif %}">
         {%- if entry.preview -%}
           {% if entry.preview contains '://' -%}
-          <img class="preview z-depth-1 rounded" src="{{ entry.preview }}">
+            {%- if entry.video %}
+              {% if entry.video contains '://' -%}
+              <a href="{{ entry.video }}"><img class="preview z-depth-1 rounded" src="{{ entry.preview }}"></a>
+              {%- else -%}
+              <a href="{{ entry.video | prepend: '/assets/pdf/' | relative_url }}"><img class="preview z-depth-1 rounded" src="{{ entry.preview }}"></a>
+              {%- endif %}
+            {%- else -%}
+              <img class="preview z-depth-1 rounded" src="{{ entry.preview }}">
+            {%- endif %}
           {%- else -%}
-          <img class="preview z-depth-1 rounded" src="{{ entry.preview | prepend: '/assets/img/publication_preview/' | relative_url }}">
+            {%- if entry.video %}
+              {% if entry.video contains '://' -%}
+              <a href="{{ entry.video }}"><img class="preview z-depth-1 rounded" src="{{ entry.preview | prepend: '/assets/img/publication_preview/' | relative_url }}"></a>
+              {%- else -%}
+              <a href="{{ entry.video | prepend: '/assets/pdf/' | relative_url }}"><img class="preview z-depth-1 rounded" src="{{ entry.preview | prepend: '/assets/img/publication_preview/' | relative_url }}"></a>
+              {%- endif %}
+            {%- else -%}
+              <img class="preview z-depth-1 rounded" src="{{ entry.preview | prepend: '/assets/img/publication_preview/' | relative_url }}">
+            {%- endif %}
           {%- endif -%}
         {%- elsif entry.abbr -%}
           {%- if site.data.venues[entry.abbr] -%}
@@ -152,6 +168,13 @@
             <a href="{{ entry.supp }}" class="btn btn-sm z-depth-0" role="button">Supp</a>
             {%- else -%}
             <a href="{{ entry.supp | prepend: '/assets/pdf/' | relative_url }}" class="btn btn-sm z-depth-0" role="button">Supp</a>
+            {%- endif %}
+          {%- endif %}
+          {%- if entry.video %}
+            {% if entry.video contains '://' -%}
+            <a href="{{ entry.video }}" class="btn btn-sm z-depth-0" role="button">Video</a>
+            {%- else -%}
+            <a href="{{ entry.video | prepend: '/assets/pdf/' | relative_url }}" class="btn btn-sm z-depth-0" role="button">Video</a>
             {%- endif %}
           {%- endif %}
           {%- if entry.blog %}
