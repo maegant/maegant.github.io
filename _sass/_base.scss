@@ -32,8 +32,61 @@ a, table.table a {
   }
 }
 
-figure, img {
-  max-width: 90vw;
+// figure, img {
+//   max-width: 90vw;
+
+figure {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin: 2em 0;
+
+  img,
+  iframe,
+  .fluid-width-video-wrapper {
+    margin-bottom: 1em;
+  }
+
+  img {
+    width: 100%;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+  }
+
+  > a {
+    display: block;
+  }
+
+  &.half {
+    > a,
+    > img {
+      @include breakpoint($small) {
+        width: calc(50% - 0.5em);
+      }
+    }
+
+    figcaption {
+      width: 100%;
+    }
+  }
+
+  &.third {
+    > a,
+    > img {
+      @include breakpoint($small) {
+        width: calc(33.3333% - 0.5em);
+      }
+    }
+
+    figcaption {
+      width: 100%;
+    }
+  }
 }
 
 blockquote {
@@ -437,16 +490,18 @@ footer.sticky-bottom {
 
   .card-item {
     width: auto;
+    height: 250px;
     margin-bottom: 10px;
 
     .row {
-      display: flex;
-      align-items: center;
+      display: grid;
+      // align-items: flex-end;;
     }
   }
 
   .grid-sizer, .grid-item {
     width: 250px;
+    height: 250px;
     margin-bottom: 10px;
   }
 
