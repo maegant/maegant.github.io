@@ -1,0 +1,29 @@
+/*  global jQuery */
+
+(function ($, window, document) {
+  function load_notifications() {
+    $('.notifications-block').each(function () {
+      var notifications_api_url = '/api/v1/notifications/' + $(this).data('location-id');
+      $.ajax({
+        url: notifications_api_url,
+        context: this,
+        dataType: 'json'
+      }).done( function (data) {
+        html = ''
+        for (var i in data) {
+          html += '<div class="notifications-block__post px-5 py-3 d-flex flex-row align-items-center">';
+          html += '<div class="notifications-block__post__icon mr-3"><span class="notifications-block__post__icon__icon icon icon-fa-bullhorn"></span></div>';
+          html += '<div class="notifications-block__post__text">';
+          html += $('<div/>').html(data[i].text).html();
+          html += '</div></div>'
+        }
+        $(this).html(html);
+      });
+    });
+  }
+
+  $(document).ready(function() {
+    load_notifications();
+  });
+}(jQuery, this, this.document));
+

@@ -1,0 +1,140 @@
+/* global _ */
+/**
+ * This file defines the javascript functionality provided by the v7.0 theme. This includes all the chrome that is
+ * shared by both caltech_sites and www, such as the header, main menu, mobile menu, and footer.
+ */
+
+(function ($, window, document) {
+  var close_timer = null;
+  var open_timer = null;
+
+  function configure_utility_menu() {
+    // The utility menu is handled primarily by Bootstrap, but we have one bit of custom functionality.
+    $('.header__utility-menu .js-has-children').on('click', function() {
+      // When the user clicks on the link for any Utility Menu item that has children, that clicks opens the submenu,
+      // rather than navigating to wherever it might be linked to.
+      $(this).siblings('.dropdown-toggle').trigger('click');
+      return false;
+    });
+  }
+
+  function configure_main_menu() {
+    function open_menu(level_1_menu_item) {
+      level_1_menu_item.children('.header__main-menu__level-2').addClass('show');
+    }
+
+    function close_menu() {
+      $('.header__main-menu__level-2').removeClass('show');
+    }
+
+    // Open the menu under a level-1 menu item shortly after the user starts hovering it. Note that the level-1
+    // items wrap the level-2 submenus, meaning that hovering over the level-2 menu IS hovering over the level-1 item.
+    $('.header__main-menu__level-1__item').on('mouseenter', function() {
+      // Cancel any existing open_timer before starting a new one.
+      clearTimeout(open_timer);
+      open_timer = _.delay(open_menu, 250, $(this));
+    });
+
+    // Close a level-1 menu item's menu shortly after the user stops hovering it.
+    $('.header__main-menu__level-1__item').on('mouseleave', function() {
+      // Cancel both timers, then start the close_timer again.
+      clearTimeout(close_timer);
+      clearTimeout(open_timer);
+      close_timer = _.delay(close_menu, 250);
+    });
+
+    // Set up the +/- elements on the submenus.
+    $('.dropdown-submenu .dropdown-toggle-split').on('click', function() {
+      var opener = $(this);
+      var submenu = $(this).siblings('.dropdown-menu');
+
+      // Each time the user clicks an opener, toggle the +/- class and the visibility of the submenu.
+      opener.find('.oi').toggleClass('oi-plus').toggleClass('oi-minus');
+      submenu.toggleClass('show');
+
+      // When the parent menu is finished hiding itself after being dismissed, also hide the submenus inside it
+      // and set the openers back to +.
+      $(this).parents('.dropdown.show').on('hidden.bs.dropdown', function() {
+        $('.dropdown-submenu .dropdown-menu').removeClass('show');
+        opener.find('.oi').removeClass('oi-minus').addClass('oi-plus');
+      });
+
+      // Prevent the click from triggering its default action, which would cause the parent dropdown to close.
+      return false;
+    });
+
+    // Make clicks on Level 2 menu-only elements trigger their associated opener.
+    $('.js-level-2-menu-only').on('click', function () {
+      $(this).siblings('.dropdown-toggle-split').trigger('click');
+    });
+  }
+
+  function configure_search() {
+    $('.header__search__button').on('click', function() {
+      var magnifying_glass_pos = $(this).offset().left;
+      // 280px is the width of the search form. This ensures that it won't ever open in a way that lets part of it
+      // get cut off by the left edge of the viewport.
+      if (magnifying_glass_pos > 280) {
+        $('.header__search__form').toggleClass('show').removeClass('show-right');
+      }
+      else {
+        $('.header__search__form').toggleClass('show-right').removeClass('show');
+      }
+      // When the search form is displayed, focus the query field.
+      $('.header__search__form__query').focus();
+    });
+  }
+
+  function configure_slide_menu() {
+    // Activate one of the slides when the user clicks the corresponding slide-opener.
+    $('.slide-menu__level-1__slide-opener').on('click', function() {
+      var slide_id = $(this).data('slide-id');
+      $(slide_id).addClass('js-active');
+      $('.slide-menu__slide-wrapper').addClass('js-slid');
+      // Must return false here to avoid bubbling the click event, which would trigger Bootstrap to close the dropdown.
+      return false;
+    });
+
+    // Slide the slide-wrapper back into its initial position when the user click the back-button or the black-stripe.
+    $('.slide-menu__level-2__back-button, .slide-menu__level-2__black-stripe').on('click', function() {
+      $('.slide-menu__slide-wrapper').removeClass('js-slid');
+      // Must return false here to avoid bubbling the click event, which would trigger Bootstrap to close the dropdown.
+      return false;
+    });
+
+    // Also prevent clicks on menu-only page spans from closing the Bootstrap dropdown.
+    $('.slide-menu .js-menu-only').on('click', function() {
+      return false;
+    });
+
+    // Reset the slide behavior classes when the slide menu gets closed (usually by the user clicking outside of it).
+    $('.slide-menu').on('hidden.bs.dropdown', function() {
+      $('.slide-menu .js-active').removeClass('js-active');
+      $('.slide-menu__slide-wrapper').removeClass('js-slid');
+    });
+
+    // Set up the slides to vanish AFTER the slide-back-to-level-1 animation transition is finished.
+    $('.slide-menu__slide-wrapper').on('transitionend', function() {
+      if (!$(this).hasClass('js-slid')) {
+        $('.slide-menu .js-active').removeClass('js-active');
+      }
+    });
+  }
+
+  function configure_modals() {
+    // Configure all our models to reset when they close. This will cause videos within them to stop playing, and
+    // cause carousels to go back to the start.
+    $('.modal').on('hidden.bs.modal', function() {
+      var stored = $(this).html();
+      $(this).html(stored);
+    });
+  }
+
+  $(document).ready(function() {
+    configure_utility_menu();
+    configure_main_menu();
+    configure_search();
+    configure_slide_menu();
+    configure_modals();
+  });
+}(jQuery, this, this.document));

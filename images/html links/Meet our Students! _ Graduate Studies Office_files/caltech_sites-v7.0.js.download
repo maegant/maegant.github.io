@@ -1,0 +1,57 @@
+/* global jQuery */
+(function ($, window, document) {
+
+
+  // Person Profile block - trim profile text until it fits in the height allotted for this info by the site's template
+  function trim_text(profile_div) {
+    var profile = profile_div.find('.profile-text');
+    var height_limit = parseInt(profile.data()['heightLimit']);
+
+    if (!isNaN(height_limit)) {
+      var text, idx;
+      var available_height = profile.data()['heightLimit'];
+      var profile_height = profile.height();
+      var full_text = profile.html();
+
+      // If the profile's content div is taller than the height specified for profiles, remove words until it's not.
+      if (profile_height > available_height) {
+        text = profile.html();
+        while (text.length && (profile_height > available_height)) {
+          // Find the last space in the profile, delete everything after it, append an elipsis, and check if it's
+          // still too tall.
+          idx = text.lastIndexOf(' ');
+          text = text.substring(0, idx);
+          profile.html(text + '<br><br> ... <a href="" class="profile-block__read-more">Read More</a>');
+          profile_height = profile.height();
+        }
+
+        $('.profile-block__read-more').on('click', function(event){
+          event.preventDefault();
+          var full_text_div = profile_div.find('.full-profile-text');
+
+          full_text_div.html(full_text + '<p><a href="" class="profile-block__show-less">Less</a></p>');
+          full_text_div.removeClass('d-none');
+          profile.addClass('d-none');
+
+          $('.profile-block__show-less').on('click', function(e2){
+            e2.preventDefault();
+            profile.removeClass('d-none');
+            full_text_div.addClass('d-none');
+            });
+          });
+      }
+    }
+  }
+
+  function trim_profile_text() {
+    $('.person-page2__profile-block').each(function() {
+      trim_text($(this));
+    })
+  }
+
+
+  $(document).ready(function() {
+    trim_profile_text();
+  });
+
+}(jQuery, this, this.document));

@@ -1,0 +1,143 @@
+/*  global jQuery */
+
+(function ($, window, document) {
+  function configure_photo_gallery_blocks() {
+    $('.photo-gallery-block').each(function() {
+      airspace_show_active_item_in_lightbox($(this));
+    });
+  }
+
+  function load_did_you_know_items() {
+    $('.did-you-know-block').each(function () {
+      // Use 250x144 if this block is inside a two-column block. Otherwise, use 163x144 (the original aspect ratio).
+      var width = $(this).parents('.two-column-layout-block').length ? 250 : 163;
+      var api_url = '/api/v1/did-you-know/random/' + $(this).data('number') + '/' + width + '/144';
+      var html = '';
+      var root = null;
+      $.ajax({
+        url: api_url,
+        context: this,
+        dataType: 'json'
+      }).done(function (data) {
+        root = $(this).find('.did-you-know-block__tiles');
+        var carousel = $(this).find('.carousel-inner');
+        html = '';
+        for (var i in data) {
+          // Both the tile and the link need "d-flex flex-row justify-content-between" because the link is optional.
+          html += '<div class="did-you-know-block__tiles__tile d-flex flex-row justify-content-between">';
+          if (data[i].link != null) {
+            html += '<a class="did-you-know-block__tiles__tile__link d-flex flex-row justify-content-between" href="' +
+              data[i].link + '">';
+          }
+          html += '<div class="did-you-know-block__tiles__tile__text align-self-center">';
+          html += $('<div/>').html(data[i].text).text();
+          html += '</div>';
+          html += '<div class="did-you-know-block__tiles__tile__image">';
+          html += '<img class="did-you-know-block__tiles__tile__image__crop img-fluid" src="' + data[i].crop.src +
+            '" alt="' + data[i].crop.alt + '" height="' + data[i].crop.height + '" width="' + data[i].crop.width + '" />';
+          html += '</div>';
+          if (data[i].link != null) {
+            html += '</a>';
+          }
+          html += '</div>';
+        }
+        $(root).html(html);
+
+        html = '';
+        // Carousel
+        for (var d in data) {
+          // The wrapper is needed because the carousel behavior relies on "display: block", but the tiles need to be
+          // "display: flex".
+          html += '<div class="did-you-know-block__carousel__wrapper carousel-item">';
+          // Both the tile and the link need "d-flex justify-content-between" because the link is optional.
+          html += '<div class="did-you-know-block__carousel__tile d-flex justify-content-between">';
+          if (data[d].link != null) {
+            html += '<a class="did-you-know-block__carousel__tile__link d-flex justify-content-between" href="' +
+              data[d].link + '">';
+          }
+          html += '<div class="did-you-know-block__carousel__tile__text align-self-center">';
+          html += $('<div/>').html(data[d].text).text();
+          html += '</div>';
+          html += '<div class="did-you-know-block__carousel__tile__image">';
+          html += '<img class="did-you-know-block__carousel__tile__image__crop img-fluid" src="' + data[d].crop.src +
+            '" alt="' + data[d].crop.alt + '" height="' + data[d].crop.height + '" width="' + data[d].crop.width + '" />';
+          html += '</div>';
+          if (data[d].link != null) {
+            html += '</a>';
+          }
+          html += '</div>';
+          html += '</div>';
+        }
+        $(carousel).html(html);
+        make_proper_number_of_did_you_know_items_show();
+        $(window).on('resize orientationchange', function() {
+          make_proper_number_of_did_you_know_items_show();
+        });
+      });
+    });
+  }
+
+  function make_proper_number_of_did_you_know_items_show() {
+    // Got this from: https://www.codeply.com/go/s3I9ivCBYH/multi-carousel-single-slide-bootstrap-4
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      $('.did-you-know-block .carousel-item.active').removeClass('active');
+      $('.did-you-know-block .carousel-item:first-child').addClass('active');
+    }
+    else if (window.matchMedia("(min-width: 768px) and (max-width: 1200px)").matches) {
+      $('.did-you-know-block .carousel-item.active').removeClass('active');
+      $('.did-you-know-block .carousel-item:first-child').addClass('active');
+      $('.did-you-know-block .carousel').on('slide.bs.carousel', function(e) {
+        var $e = $(e.relatedTarget);
+        var idx = $e.index();
+        var itemsPerSlide = 2;
+        var totalItems = $('.did-you-know-block .carousel-item').length;
+
+        if (idx >= totalItems-(itemsPerSlide-1)) {
+          var it = itemsPerSlide - (totalItems - idx);
+          for (var i=0; i<it; i++) {
+            // append slides to end
+            if (e.direction=="left") {
+              $('.did-you-know-block .carousel-item').eq(i).appendTo('.did-you-know-block .carousel-inner');
+            }
+            else {
+              $('.did-you-know-block .carousel-item').eq(0).appendTo('.did-you-know-block .carousel-inner');
+            }
+          }
+        }
+      });
+    }
+  }
+
+  function make_adjacent_titledlinksblocks_the_same_height() {
+    // This is a bit of an oddball function. It's specifically for a particular page on the HSS site, but can be
+    // useful for aesthetic reasons in other places, too.
+    // What it does is look for instances of AirspaceTwoColumnLayoutBlock, then look for side-by-side instances of
+    // AirspaceTitledLinksBlock within them. It determines which is taller, then sets both to the same height.
+    $('.two-column-layout-block__left-column-content').each(function() {
+      var left_column_content = $(this);
+      // Only grab the :first-child because we can't know that any other arrangement makes sense to match height.
+      var left_column_links_block = left_column_content.find('.titled-links-block:first-child');
+      // If a TitledLinksBlock exists inside the left column, look for one in the right column.
+      if (left_column_links_block.length) {
+        var right_column_links_block = left_column_content.siblings().eq(0).find('.titled-links-block:first-child');
+        if (right_column_links_block.length) {
+          // Figure out which is taller, then set them both to that height.
+          var max_height = Math.max(right_column_links_block.height(), left_column_links_block.height());
+          right_column_links_block.height(max_height);
+          left_column_links_block.height(max_height);
+        }
+      }
+    });
+  }
+
+  $(document).ready(function() {
+    load_did_you_know_items();
+    configure_photo_gallery_blocks();
+    make_adjacent_titledlinksblocks_the_same_height();
+  });
+
+  // Unfortunately, due to limitations in CSS, we can't get tweets to be *optionally* square with just CSS, so this
+  // little JS snippet is needed. We specifically DON'T do this inside document.ready(), because that causes a slight
+  // flicker. This change is low level enough that it's safe to do as soon as the JS file loads.
+  $('.twitter-block--square').parent().addClass('square');
+}(jQuery, this, this.document));

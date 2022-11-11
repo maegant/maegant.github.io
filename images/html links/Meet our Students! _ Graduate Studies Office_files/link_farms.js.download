@@ -1,0 +1,18 @@
+(function ($, window, document) {
+  $(document).ready(function() {
+    // This is required for unknown reasons. Dismissible Popovers should work fine with data- attrs instead of js, like
+    // 95% of Bootstrap, but they don't.
+    // TODO: When upgrading to Bootstrap 4.3+, check if this can be converted to data- attrs.
+    $('.link-farm-item__long-desc-button').popover({
+      // Makes the popover disappear as soon as anything except the 'i' icon gains focus or gets clicked.
+      trigger: 'focus',
+      // Uncomment this to make it disappear only when you click the 'i'. This makes re-theming it possible.
+      // trigger: 'click',
+      // Appends the popover element to the .content. For some reason, using something closer to the Link, like the
+      // .link-farm__collection, doesn't work, and I don't know why.
+      container: '.content',
+      // Replace the HTML template with our own, which lets us add BEM classes so the CSS applies on both Pages and Blocks.
+      template: '<div class="popover link-farm__popover" role="tooltip"><div class="arrow"></div><h3 class="popover-header link-farm__popover__header"></h3><div class="popover-body link-farm__popover__body"></div></div>'
+    });
+  });
+}(jQuery, this, this.document));

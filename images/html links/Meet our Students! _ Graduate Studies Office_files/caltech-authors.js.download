@@ -1,0 +1,76 @@
+/* global jQuery */
+(function ($, window, document) {
+
+  function retrieve_publications(elem, data) {
+    // retrieve publication data from Caltech Authors feed
+    // First initialize CL library code from https://feeds.library.caltech.edu/scripts/CL.js
+    var cl = Object.assign({}, window.CL);
+    var config = {};
+    cl.BaseURL = "https://feeds.library.caltech.edu";
+    var useRecent;
+    var recent_n;
+
+    if (data.useRecent) {
+      useRecent = true;
+      recent_n = parseInt(data.recentN);
+      if (isNaN(recent_n)) {
+        useRecent = false;
+      }
+    }
+
+    // Note this is straight JS (not jQuery) so any data attribute from the DOM is truthy
+    // so I set all of the defaults to false and then anything we want to be true must exist in the HTML
+    config = {
+      "aggregation": data.aggregation,
+      "feed_id": data.caltechAuthorsName,
+      "feed_path": data.feedType,
+      "use_recent": useRecent,
+      "recent_n": recent_n,
+      "feed_count": data.feedCount,
+      "show_year_headings": data.showYearHeadings,
+      "creators": data.creators,
+      "pub_date": data.pubDate,
+      "title_link": data.titleLink,
+      "citation_details": data.citationDetails,
+      "issn_or_isbn": data.issnOrIsbn,
+      "pmcid": data.pmcid,
+      "description": data.description,
+      "developer_mode": false,
+      "include_style": false,
+      "include_CL": true,
+      "repository": "CaltechAUTHORS",
+      "css_classname": ".CaltechAUTHORS",
+      "filters": []
+    };
+
+    config.parent_element = elem;
+    cl.setAttribute("recentN", recent_n);
+    config.filters.push(cl.recentN);
+    config.filters.push(cl.normalize_view);
+    cl.setAttribute("viewer", config);
+    if (config.aggregation == 'people') {
+      cl.getPeopleJSON(config.feed_id, config.feed_path, function(data, err) {
+        cl.viewer(data, err);
+      });
+    }
+    if (config.aggregation == 'groups') {
+      cl.getGroupJSON(config.feed_id, config.feed_path, function(data, err) {
+        cl.viewer(data, err);
+      });
+    }
+  }
+
+  function populate_publications_block() {
+    $('.caltech-authors-publications').each(function() {
+      // We want to leverage jQuery's automatic conversion of "true" to true, so process attrs here
+      var data = $(this).data();
+      // The library's CL library expects to get DOM elements, not jQuery objects, hence the [0]
+      retrieve_publications($(this)[0], data);
+    })
+  }
+
+  $(document).ready(function() {
+    populate_publications_block();
+  });
+
+}(jQuery, this, this.document));

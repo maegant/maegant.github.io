@@ -1,0 +1,160 @@
+/*  global jQuery */
+
+(function ($, window, document) {
+
+  function show_video_in_lightbox(block) {
+    // Set up the "watch video" buttons to show the video corresponding to the button that was clicked.
+    // All of the videos are included in the modal - but only the one we make 'active' will be shown.
+    // We need to use block.parent() because the lightbox is not inside the carousel block for positioning reasons.
+    $('.modal', block.parent()).on('show.bs.modal', function(event) {
+      // event.relatedTarget is the watch button that triggered the modal; it knows the index of the video it wants.
+      var target_index = $(event.relatedTarget).data('lightbox-index');
+      $('.carousel-item.active', this).removeClass('active');
+      $('.carousel-item', this).eq(target_index).addClass('active');
+    });
+  }
+
+  function configure_news_carousel_block(tag) {
+    function setup_carousel_pause_buttons(news_carousel) {
+      var paused = false;
+
+      $('.js-pause', news_carousel).bind("click", function() {
+        if (paused) {
+          news_carousel.carousel('cycle');
+          paused = false;
+        } else {
+          news_carousel.carousel('pause');
+          paused = true;
+        }
+        $(this).toggleClass("oi-media-play oi-media-pause");
+      });
+    }
+
+    function move_control_arrows_to_center_of_image(tag, news_carousel, image_height) {
+      // On mobile, the arrows are at the bottom of the images; otherwise they are vertically centered on the image
+      if (window.matchMedia("(max-width: 479px)").matches && tag == '.news_carousel') {
+        $(tag + '__carousel-control', news_carousel).css('top', image_height - 25);
+      } else {
+        $(tag + '__carousel-control', news_carousel).css('top', image_height / 2);
+      }
+    }
+
+    function move_dots_to_bottom_of_image(tag, news_carousel, image_height) {
+      $(tag + '__carousel-indicators', news_carousel).css('top', image_height - 25);
+    }
+
+    function make_bottom_captions_same_height(tag, news_carousel) {
+      // NB this is only needed for the full width carousel whose captions move from overlay to underneath on small devices
+      var max_height = 0;
+
+      // we only have to care about this on mobile when the captions are under rather than on top of the images
+      if ((tag == '.news-carousel' && window.matchMedia("(max-width: 767px)").matches) ||
+      (tag == '.news-carousel-small' && window.matchMedia("(max-width: 1024px)").matches)) {
+        // Loop over all items in a corousel and find the tallest one. Because Bootstrap's carousel sets display: none
+        // for the hidden items, we need to unhide them, find their caption's height, then rehide them again
+        $(tag + '__carousel-item', news_carousel).each(function(index, item) {
+          // remove the height attribute we may have set previousl; otherwise the captions don't resize when orientation changes
+          $(tag + '__carousel-caption', item).css('height', '');
+          // Now we can start checking heights
+          var init_height = $(tag + '__carousel-caption', item).outerHeight(true);
+
+          if (init_height == 0) {
+            $(item).css('display', 'block');
+          }
+
+          var element_height = $(tag + '__carousel-caption', item).outerHeight(true);
+
+          if (element_height > max_height) {
+            max_height = element_height;
+          }
+          if (init_height == 0) {
+            $(item).css('display', '');
+          }
+        });
+
+        $(tag + '__carousel-caption', news_carousel).css('height', max_height);
+      } else {
+        $(tag + '__carousel-caption', news_carousel).css('height', '');
+      }
+    }
+
+    function make_side_captions_same_height_as_image(tag, news_carousel) {
+      // NB only needed for the side caption on new-carousel-small
+      var image_height = $(tag + '__carousel-item.active ' + tag + '__image', news_carousel).outerHeight();
+
+      // we only have to care about this on mobile when the captions are beside the image
+      if (window.matchMedia("(min-width: 1024px)").matches) {
+        $(tag + '__carousel-caption', news_carousel).css('height', image_height);
+      } else {
+        $(tag + '__carousel-caption', news_carousel).css('height', '');
+      }
+    }
+
+    $(tag).each(function() {
+      var news_carousel = $(this);
+
+      setup_carousel_pause_buttons(news_carousel);
+      show_video_in_lightbox(news_carousel);
+
+      var first_image_height = $(tag + '__carousel-item.active ' + tag + '__image', news_carousel).outerHeight();
+      move_control_arrows_to_center_of_image(tag, news_carousel, first_image_height);
+      move_dots_to_bottom_of_image(tag, news_carousel, first_image_height);
+
+      make_bottom_captions_same_height(tag, news_carousel);
+      if (tag == '.news-carousel-small' && window.matchMedia("(min-width: 1024px)").matches) {
+        make_side_captions_same_height_as_image(tag, news_carousel);
+      }
+
+      // When the window is resized or reoriented, reposition all the elements that need to be aligned to the image.
+      $(window).on('load resize orientationchange', function() {
+        // Key everything to the height of the active item's image
+        var image_height = $(tag + '__carousel-item.active ' + tag + '__image', news_carousel).outerHeight();
+        if (image_height !== 0) {
+          move_control_arrows_to_center_of_image(tag, news_carousel, image_height);
+          move_dots_to_bottom_of_image(tag, news_carousel, image_height);
+
+          make_bottom_captions_same_height(tag, news_carousel);
+          if (tag == '.news-carousel-small' && window.matchMedia("(min-width: 1024px)").matches) {
+            make_side_captions_same_height_as_image(tag, news_carousel);
+          }
+        }
+      });
+    });
+  }
+
+  function news_lead_paragraph() {
+    if ($('#content').hasClass('news-page')) {
+      var first_layout_block = $(".layout-block").first();
+      var first_rich_text = first_layout_block.find(".block-AirspaceRichTextBlock").first();
+      first_rich_text.find("p:first").addClass('lead');
+    }
+  }
+
+  function submit_news_hub_ordering_form() {
+    if ($('#content').hasClass('news-hub-page')) {
+      $('.news-article-list input[type=radio]').on('change', function () {
+        $(this).closest("form").submit();
+      });
+    }
+  }
+
+  function configure_video_popup(tag) {
+    // Set up the "watch video" buttons to show the video corresponding to the button that was clicked.
+    // All of the videos are included in the modal - but only the one we make 'active' will be shown.
+    // We need to use block.parent() because the lightbox is not inside the carousel block for positioning reasons.
+    $(tag).each(function (){
+      var block = $(this);
+      show_video_in_lightbox(block);
+    });
+  }
+
+  $(document).ready(function() {
+    configure_news_carousel_block('.news-carousel');
+    configure_news_carousel_block('.news-carousel-small');
+    configure_video_popup('.news-article-list');
+    configure_video_popup('.news-teasers-listing-block');
+    submit_news_hub_ordering_form();
+    news_lead_paragraph();
+  });
+}(jQuery, this, this.document));
+

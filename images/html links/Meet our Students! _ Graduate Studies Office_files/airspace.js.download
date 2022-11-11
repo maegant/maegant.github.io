@@ -1,0 +1,701 @@
+/* globals $ */
+"use strict";
+
+/**
+ * This file defines all the javascript functionality provided by wagtail-airspace.
+ *
+ * NOTE: Unlike most ADS javascript files, we do not define all these functions inside a closure. This is because other
+ * code sometimes needs to call some of these functions after the page has finished loading.
+ */
+
+function airspace_get_translate_distance_for_centering(carousel_item) {
+  var cic_block = carousel_item.parent().parent();
+  var left_shift = -carousel_item.position().left;
+  var right_shift = 0;
+  var left_edge_difference = 0;
+  var item_width = 0;
+
+  // Don't worry about right-shift on portrait phones. The left-shift alone does what we need.
+  if (window.matchMedia("(min-width: 480px)").matches) {
+    // Everywhere else, we slide the wrapper far enough to the left to put the
+    // item on the left edge of the block. Then slide it back to the right far
+    // enough to line up the image's left edge with the left edge of the main
+    // content column.  The location of the main content column depends on what
+    // type of page this block is being rendered on.
+    var layout_block = $();
+    // Loop through all the previous siblings, in order from closest to farthest, looking for siblings that have a
+    // layout-block inside them. Once (if) you find one, assign it to layout_block and stop.
+    cic_block.parent().prevAll().each(function() {
+      var sibling_layout_block = $(this).find('.layout-block');
+      if (sibling_layout_block.length) {
+        layout_block = sibling_layout_block;
+        // Stop the loop.
+        return false;
+      }
+    });
+    if (!layout_block.length) {
+      // Do the same for the below siblings, if there's no layout block above.
+      cic_block.parent().nextAll().each(function() {
+        var sibling_layout_block = $(this).find('.layout-block');
+        if (sibling_layout_block.length) {
+          layout_block = sibling_layout_block;
+          // Stop the loop.
+          return false;
+        }
+      });
+    }
+    if ($('#content').hasClass('interior-page') || $('#content').hasClass('home-page')) {
+      if (layout_block.hasClass('left-sidebar-block')) {
+        // The carousel wrapper has to be shifted a distance equal to the difference between the left edge of the
+        // cic-block and the left edge of the left-sidebar-block, plus the width of the __sidebar element.
+        // .offset() is perfect for calculating the left-edge difference between the two blocks.
+        left_edge_difference = layout_block.offset().left - cic_block.offset().left;
+        // Get the outerWidth() of a Left Sidebar Block's sidebar, since width() doesn't account for padding.
+        var sidebar_width = layout_block.find('.js-sidebar').outerWidth();
+        // Finally, add 20px to account for the padding-left on the __content element.
+        right_shift = left_edge_difference + sidebar_width + 20;
+      }
+      else if (layout_block.hasClass('centered-one-column-block')) {
+        // There's no sidebar or padding to take into account here, so .offset() subtraction alone is all we need.
+        right_shift = layout_block.offset().left - cic_block.offset().left;
+      }
+      else {
+        // If there is no left-sidebar-block or centered-one-column-block to line up with, just center the image.
+        item_width = carousel_item.outerWidth();
+        left_shift = left_shift + (cic_block.outerWidth() - item_width) / 2;
+      }
+    }
+    else if ($('#content').hasClass('news-page')) {
+      if (layout_block.length > 0) {
+        // If there is ANY sibling layout block, it must necessarily be a right-sidebar-block.
+        // .offset() is perfect for calculating the left-edge difference between the two blocks.
+        left_edge_difference = layout_block.offset().left - cic_block.offset().left;
+        // Find out how far offset the right right sidebar is compared to the entire sidebar layout block.
+        var content_left_offset = layout_block.find('.js-sidebar').offset().left - layout_block.offset().left;
+        // Shift the carousel over so that the space between two images lines up with the space between the sidebar
+        // and the content.
+        right_shift = left_edge_difference + content_left_offset;
+        // Finally, subtract the width of one full image + gutter, so that the _second_ image's right edge is lined up
+        // with the right edge of the content, rather than the first image.
+        right_shift = right_shift - 20 - 770;
+      }
+      else {
+        // If there is no main content div, just center the image
+        item_width = carousel_item.outerWidth();
+        left_shift = left_shift + (cic_block.outerWidth() - item_width) / 2;
+      }
+    }
+  }
+
+  return left_shift + right_shift;
+}
+
+function airspace_cic_slide_to_item(to_item, from_item, direction, cic_block) {
+  // If one of the controls is clicked and it leads to an extant carousel-item, we slide the carousel-wrapper an
+  // appropriate distance, then set the item being slid to as "active", and set the item being slid away from as
+  // "animating" until the animation is done. The CSS makes the captions appear for both active and animating items,
+  // and using separate classes allows the controls to work correctly even when clicked during an animation.
+  if (to_item.length) {
+    // To allow the carousel to loop, before starting the animation, we copy the element on the end being scrolled away
+    // from to the end being scrolled toward. That way even a 3-item carousel being scrolled left will be able to see
+    // the first element show up on the right as part of the animation.
+    var wrapper = $('.cic-block__carousel-wrapper', cic_block);
+    if (direction == 'left') {
+      // If the carousel is about to move left, copy the right-most element onto the left end before animating.
+      var carousel_item_copy = $('.cic-block__carousel-item', cic_block).eq(-1).clone();
+      // While copying, we need to move the left edge of the carousel wrapper enough to make room for the new item.
+      var wrapper_current_translate = wrapper.offset().left - cic_block.offset().left;
+      var new_left_translate = wrapper_current_translate - $('.cic-block__carousel-item', cic_block).eq(-1).width();
+      airspace_translate_item_without_animating(wrapper, new_left_translate);
+      $('.cic-block__carousel-item', cic_block).eq(0).before(carousel_item_copy);
+    }
+    else {
+      // If the carousel is about to move right, copy the left-most element onto the right end.
+      var carousel_item_copy = $('.cic-block__carousel-item', cic_block).eq(0).clone();
+      // We don't need to change the translate when moving right, because the copied object is being added to the end,
+      // rather than the beginning. IT's the post-animation step for moving right that needs to do the translate.
+      $('.cic-block__carousel-item', cic_block).eq(-1).after(carousel_item_copy)
+    }
+    var wrapper = to_item.parent();
+    wrapper.css('transform', 'translateX(' + airspace_get_translate_distance_for_centering(to_item) + 'px)');
+    to_item.addClass('active');
+    from_item.removeClass('active').addClass('animating');
+    // Note the use of one() instead of on(). This is necessary to avoid duplicate executions of this function on
+    // subsequent left or right slide actions.
+    wrapper.one('transitionend', function() {
+      from_item.removeClass('animating');
+      // Once the animation is complete, remove the old version of the item that we copied before the animation began.
+      if (direction == 'left') {
+        // If the carousel just moved left, remove the right-most element. No need to shift the wrapper.
+        var item_to_remove = $('.cic-block__carousel-item', cic_block).eq(-1);
+        item_to_remove.remove();
+      }
+      else {
+        // If the carousel just moved right, remove the left-most element.
+        var item_to_remove = $('.cic-block__carousel-item', cic_block).eq(0);
+        // Shift the wrapper to prevent its contents from jumping leftward once the first item is gone.
+        var wrapper_current_translate = wrapper.offset().left - cic_block.offset().left;
+        var new_left_translate = wrapper_current_translate + item_to_remove.width();
+        if (window.matchMedia("(min-width: 600px)").matches) {
+          // The +20 accounts for the right-padding of 20px that's applied on devices larger than portrait phones.
+          new_left_translate += 20;
+        }
+        airspace_translate_item_without_animating(wrapper, new_left_translate);
+        item_to_remove.remove();
+      }
+    });
+  }
+}
+
+/**
+ * Translates the specified item the specified number of pixels left or right without animating it, even if that
+ * item normally has a "transition" CSS rule.
+ */
+function airspace_translate_item_without_animating(item, pixels) {
+  item.addClass('no-transition');
+  item.css('transform', 'translateX(' + pixels + 'px)');
+  // Trigger a reflow, flushing the CSS changes to ensure that no-transition is removed AFTER the translate.
+  window.getComputedStyle(item[0]).transform;
+  item.removeClass('no-transition');
+}
+
+function airspace_center_item_without_animating(carousel_item) {
+  // Used by the page-load code and the resize/orientationchange code, this function centers the active carousel item.
+  var wrapper = carousel_item.parent();
+  airspace_translate_item_without_animating(wrapper, airspace_get_translate_distance_for_centering(carousel_item));
+}
+
+function airspace_setup_carousel_pause_buttons(img_carousel) {
+  var paused = false;
+
+  $('.js-pause', img_carousel).bind("click", function() {
+    if (paused) {
+      img_carousel.carousel('cycle');
+      paused = false;
+    } else {
+      img_carousel.carousel('pause');
+      paused = true;
+    }
+    $(this).toggleClass("oi-media-play oi-media-pause");
+  });
+}
+
+function airspace_show_active_item_in_lightbox(block) {
+  // Set up the zoom buttons to open the lightbox on the image that's been zoomed, rather than just the first image.
+  // We need to use block.parent() because the lightbox is not inside the .image-wst-block, for positioning reasons.
+  $('.modal', block.parent()).on('show.bs.modal', function(event) {
+    // event.relatedTarget is the zoom button that triggered the modal.
+    var target_index = $(event.relatedTarget).data('lightbox-index');
+    $('.carousel-item.active', this).removeClass('active');
+    $('.carousel-item', this).eq(target_index).addClass('active');
+  });
+}
+
+function airspace_configure_centered_image_carousel_blocks() {
+  function resize_images_to_fit_small_devices(cic_block) {
+    // Because of how the wrapper sliding is implemented, we can't just slap a width: 100% onto the images and call
+    // them responsive. We need to do something a little more "clever".
+    // So, on laptops and below (since the images are 770px wide by default, and they need to be shifted right to
+    // account for any sidebars)), we resize the images to fit within any layout block's __content element that might
+    // be on the page. If no such element exists, we resize to the width of the .cic-block.
+    if (window.matchMedia("(max-width: 800px)").matches) {
+      var width;
+      var content_block = cic_block.parent().siblings().find('.js-sidebar-content');
+      if (content_block.length) {
+        if (window.matchMedia("(max-width: 479px)").matches) {
+          // On portrait phones, we need the images to be full-width, so we ignore any associated sidebar.
+          width = cic_block.width();
+        }
+        else {
+          // On anything wider, the sidebar is going to appear, so it matters.
+          width = content_block.width();
+        }
+      }
+      else {
+        width = cic_block.width();
+      }
+      $('.cic-block__carousel-item__image').css('max-width', width).css('height', 'auto');
+      // and now basically the same thing for video, except height auto doesn't work; calculate it from aspect ratio
+      $('.cic-block__carousel-item__video').each(function() {
+        var aspect_ratio = $(this).data('aspect-ratio').split('by');
+        $(this).css('max-width', width).css('height', width * aspect_ratio[1] / aspect_ratio[0]);
+      })
+    } else {
+      // If the window gets resized to be wider than 800px, remove the resizing rules we applied.
+      $('.cic-block__carousel-item__image').css('max-width', '').css('height', '');
+      $('.cic-block__carousel-item__video').css('max-width', '').css('height', '');
+    }
+    // Since the images just got resized, the controls need to be repositioned, too.
+    move_controls_to_align_with_images(cic_block);
+  }
+
+  function move_controls_to_align_with_images(cic_block) {
+    // By default, the controls are centered within the carousel. But we actually want them centered within the
+    // _images_, so we need to figure out how far down from the top of the carousel the images stop. They're all the
+    // same height.
+    var image = $('.cic-block__carousel-item__image', cic_block).eq(0);
+    // For reasons unknown, when this function gets called at page load on any screen where the images need to get
+    // resized, image.height() always returns 0. Works fine on every other invocation, including ones called right
+    // after an image resize, but doesn't work at page load. So, when that happens, we simply don't move the controls.
+    if (image.height()) {
+      $('.cic-block__carousel-control', cic_block).css('top', image.height() / 2);
+      // we also want to put the zoom icon in the bottom left of the actual image, not the caption
+      $('.cic-block__carousel-item__zoom', cic_block).css('bottom', cic_block.height() - image.height() + 1);
+    }
+  }
+
+  $('.cic-block').each(function() {
+    var this_cic_block = $(this);
+
+    airspace_show_active_item_in_lightbox(this_cic_block);
+    resize_images_to_fit_small_devices(this_cic_block);
+
+    // We have to center the active image at page load time, because we can't center it with just the CSS, due to the
+    // vagaries of image width and viewport width. And we have to ensure that this slide is NOT animated, which is why
+    // we don't use slide_to_item().
+    var active_item = $('.cic-block__carousel-item.active', this_cic_block);
+    // We check to confirm that there is an active item, to ensure that the JS doesn't crash if the user only put a
+    // single image in the carousel. They shouldn't ever do that, but the JS shouldn't ever crash, period.
+    if (active_item.length) {
+      airspace_center_item_without_animating(active_item);
+    }
+
+    // Set up the carousel controls.
+    $('.js-cic-control-right', this_cic_block).on('click', function() {
+      var active_item = $('.cic-block__carousel-item.active', this_cic_block);
+      airspace_cic_slide_to_item(active_item.next(), active_item, 'right', this_cic_block);
+    });
+    $('.js-cic-control-left', this_cic_block).on('click', function() {
+      var active_item = $('.cic-block__carousel-item.active', this_cic_block);
+      airspace_cic_slide_to_item(active_item.prev(), active_item, 'left', this_cic_block);
+    });
+
+    // When the window is resized or reoriented, re-center the active item.
+    $(window).on('resize orientationchange', function() {
+      resize_images_to_fit_small_devices(this_cic_block);
+      airspace_center_item_without_animating($('.cic-block__carousel-item.active', this_cic_block));
+    });
+  });
+}
+
+function airspace_configure_image_carousel_blocks() {
+  function move_control_arrows_to_center_of_images(img_carousel, image_height) {
+    $('.image-carousel__carousel-control', img_carousel).css('top', image_height / 2);
+  }
+
+  function move_dots_to_bottom_of_image(img_carousel, image_height) {
+    $('.image-carousel__carousel-indicators', img_carousel).css('top', image_height - 25);
+  }
+
+  function make_carousel_captions_same_height(img_carousel) {
+    var max_height = 0;
+    // Because of the hide/show mess, we need to persist the title heights for a later correction
+    var title_heights = [];
+
+    // Loop over all items in a carousel and find the tallest one. Because Bootstrap's carousel sets display: none
+    // for the hidden items, we need to unhide them, find their caption's height, then rehide them again
+    $('.image-carousel__carousel-item', img_carousel).each(function(index, item) {
+      $('.image-carousel__caption-text', item).css('height', '');
+      var init_height = $('.image-carousel__caption-text', item).outerHeight(true);
+
+      if (init_height == 0) {
+        $(item).css('display', 'block');
+      }
+
+      var element_height = $('.image-carousel__caption-text', item).outerHeight(true);
+      // On mobile, the title goes below the image, so we need to include it in our height calculations
+      if (window.matchMedia("(max-width: 767px)").matches) {
+        var title_height = $('.image-carousel__caption-title', item).outerHeight(true);
+        title_heights.push(title_height);
+        element_height += title_height;
+      }
+
+      if (element_height > max_height) {
+        max_height = element_height;
+      }
+      if (init_height == 0) {
+        $(item).css('display', '');
+      }
+    });
+
+    // OK so now we know the total height we need, we can set the caption height.
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      // If the title is below the image, we need to remove its height from the caption height
+      $('.image-carousel__carousel-item', img_carousel).each(function(index, item) {
+        $('.image-carousel__caption-text', item).css('height', max_height -  title_heights[index]);
+      });
+    } else {
+      // on larger devices, we can set these heights all at once
+      $('.image-carousel__caption-text', img_carousel).css('height', max_height);
+    }
+  }
+
+  $('.image-carousel').each(function() {
+    var img_carousel = $(this);
+
+    airspace_setup_carousel_pause_buttons(img_carousel);
+
+    var first_image_height = $('.image-carousel__image', img_carousel).eq(0).outerHeight();
+    move_control_arrows_to_center_of_images(img_carousel, first_image_height);
+    move_dots_to_bottom_of_image(img_carousel, first_image_height);
+    make_carousel_captions_same_height(img_carousel);
+
+
+    // When the window is resized or reoriented, reposition all the elements that need to be aligned to the image.
+    $(window).on('load resize orientationchange', function() {
+      // Key everything to the height of the active item's image
+      var image_height = $('.image-carousel__carousel-item.active .image-carousel__image', img_carousel).outerHeight();
+      if (image_height !== 0) {
+        move_control_arrows_to_center_of_images(img_carousel, image_height);
+        move_dots_to_bottom_of_image(img_carousel, image_height);
+        make_carousel_captions_same_height(img_carousel);
+      }
+    });
+  });
+}
+
+function airspace_configure_image_carousel_header_blocks(tag) {
+  function move_control_arrows_to_center_of_images(img_carousel, tag, image_height) {
+    // We only have to center the arrows over the images when the caption has been moved under the image
+    if (window.matchMedia("(max-width: 479px)").matches && image_height > 0) {
+      $(tag + '__carousel-control', img_carousel).css('top', image_height / 2);
+    } else {
+      $(tag + '__carousel-control', img_carousel).css('top', '');
+    }
+  }
+
+  function move_dots_to_bottom_left_of_images(img_carousel, tag, image_height) {
+    // We only have to move the dots over the images when the caption has been moved under the image
+    if (window.matchMedia("(max-width: 479px)").matches && image_height > 0) {
+      $(tag + '__carousel-indicators', img_carousel).css('top', image_height - 25);
+    } else {
+      $(tag + '__carousel-indicators', img_carousel).css('top', '');
+    }
+  }
+
+  $(tag).each(function() {
+    var img_carousel = $(this);
+
+    airspace_setup_carousel_pause_buttons(img_carousel);
+
+    // on first load, we know the active image will be the first one.
+    // Include this so we move the arrows before waiting for ALL the images on the page to load
+    var first_image_height = $(tag + '__image', img_carousel).eq(0).outerHeight();
+    move_control_arrows_to_center_of_images(img_carousel, tag, first_image_height);
+    move_dots_to_bottom_left_of_images(img_carousel, tag, first_image_height);
+
+    // When the window is resized or reoriented, re-center the active item.
+    $(window).on('load resize orientationchange', function() {
+      var selector = tag + '__carousel-item.active ' + tag + '__image';
+      var image_height = $(selector, img_carousel).outerHeight();
+
+      move_control_arrows_to_center_of_images(img_carousel, tag, image_height);
+      move_dots_to_bottom_left_of_images(img_carousel, tag, image_height);
+    });
+  });
+}
+
+function airspace_configure_small_image_carousel_header_blocks(tag) {
+
+  $(tag).each(function() {
+    var img_carousel = $(this).find('.sic-header__carousel');
+    var title = $(this).find('.sic-header__page-info__caption-title');
+    var caption = $(this).find('.sic-header__page-info__caption-text');
+
+    img_carousel.bind('slid.bs.carousel', function(e){
+      var info = img_carousel.find('.sic-header__carousel-item__info')[e.to];
+
+      if (info) {
+        $(title).html(info.dataset.title);
+        if (info.dataset.doNotShowCaption === "True") {
+          $(caption).html("");
+        } else {
+          $(caption).html(info.dataset.caption);
+        }
+      }
+    });
+  });
+}
+function airspace_configure_sidebar_menu_blocks() {
+  $('.sidebar-menu-block__level-2__opener').on('click', function() {
+    var item = $(this).parent();
+    var submenu = $(this).parent().next('.sidebar-menu-block__level-3');
+
+    // Each time the user clicks an opener, toggle the 'active' class on the related item and level-3 submenu.
+    item.toggleClass('active');
+    submenu.toggleClass('active');
+
+    // On mobile, the sidebar menu can be opened and closed as a whole by a bootstrap dropdown behavior. This code
+    // ensures that when the mobile sidebar menu is re-opened after being closed, the current page is once again the
+    // only thing shown, regardless of which submenus were previously shown/hidden.
+    $(this).parents('.dropdown.show').on('hidden.bs.dropdown', function() {
+      // Remove the active class from all descendants of this particular Sidebar Menu Block, then add it back to the
+      // current page's elements.
+      $('.active', this).removeClass('active');
+      $('.js-sidebar-menu-current', this).addClass('active');
+    });
+
+    // Prevent the click event from taking its default action, which on mobile would cause the sidebar menu to close.
+    return false;
+  });
+
+  // Make clicks on Level 2 menu-only elements trigger their associated opener.
+  $('.js-sidebar-menu-only').on('click', function() {
+    $(this).siblings('.sidebar-menu-block__level-2__opener').trigger('click');
+    // Must return false to prevent the click from closing the sidebar menu dropdown on mobile.
+    return false;
+  });
+}
+
+function airspace_configure_image_with_side_thumbnails_blocks() {
+  function resize_block_height_to_match_main_image(block) {
+    if (window.matchMedia("(min-width: 480px)").matches) {
+      // Portrait tablets are the smallest devices where we keep the thumbnails to the side. In that layout, we need
+      // to ensure that the .image-wst-block itself is kept to the same height as the main image, so the thumbnail
+      // scroller doesn't get taller than the image.
+      block.css('height', $('.image-wst-block__slide.active img', block).width() * 675 / 1200);
+    }
+    else {
+      // Undo any manual height setting that may have happened on larger screen sizes.
+      block.css('height', '');
+    }
+  }
+
+  $('.image-wst-block').each(function() {
+    var block = $(this);
+
+    $('.image-wst-block__sidebar__thumb-wrapper', block).on('click', function() {
+      var filename = $(this).data('filename');
+      $('.image-wst-block__slide.active, .image-wst-block__sidebar__thumb-wrapper.active', block).removeClass('active');
+      $(".image-wst-block__slide[data-filename='" + filename + "']", block).addClass('active');
+      $(this).addClass('active');
+    });
+
+    // Here we make the browser wait until the first image is actually loaded to set the height of our .image-wst-block.
+    // Firefox will give the wrong image dimensions if you check before the image is fully loaded.
+    var img = new Image();
+    img.onload = function () {
+      resize_block_height_to_match_main_image(block);
+    };
+    img.src = $('.image-wst-block__slide.active img').attr('src');
+
+    $(window).on('resize orientationchange', function() {
+      resize_block_height_to_match_main_image(block);
+    });
+
+    airspace_show_active_item_in_lightbox(block);
+  });
+}
+
+function airspace_configure_carousel_with_bottom_thumbnails_blocks() {
+  function number_of_thumbnails() {
+    var number_of_thumbnails = 2;
+    if (window.matchMedia("(min-width: 480px)").matches) {
+      number_of_thumbnails = 4;
+    }
+    return number_of_thumbnails;
+  }
+
+  function resize_thumbnails(block) {
+    var parent_width = $('.carousel-wbt-block__thumbnail-wrapper', block).outerWidth();
+    // We need to account for the 2 px right border between images or our calculations for determining if we have
+    // any images hanging out the right side of the thumbnail-wrapper will be off
+    var thumbnail_width = (parent_width / number_of_thumbnails()) - 2;
+    $('.carousel-wbt-block__thumbnail-image', block).css('width', thumbnail_width);
+  }
+
+  function slide_thumbnails(block, direction) {
+    // When one of the controls is clicked, we check to see if there are any more images to show if we slide
+    // in the requested direction. If so, we slide the thumbnail-slider within the thumbnail-wrapper by updating
+    // the translateX property. This function returns the value we need for the translateX.
+    var slider = $('.js-thumbnail-slider', block);
+    var current_translate_value = slider.attr('style').split('(')[1].split(')')[0].replace('px', '');
+    var slider_left_edge = slider.offset().left;
+
+    // Default is for the slider not to move
+    var position = current_translate_value;
+
+    if (direction == 'left') {
+      // Loop through the images backwards until we find the first image that is scrolled out of site to the left
+      // and return the position of its left edge. If there are no images out the left hand side, then we will just
+      // return the current_translate_value, a.k.a. stay where we are.
+      $($('.carousel-wbt-block__thumbnail', slider).get().reverse()).each(function(index, element) {
+        var thumbnail_left_edge = $(element).offset().left - slider_left_edge;
+        if (-thumbnail_left_edge > current_translate_value) {
+          position = thumbnail_left_edge;
+          return false;
+        }
+      });
+    } else if (direction == 'right') {
+      // If we have images hanging out the right hand boundary, then we need to update translate when left arrow clicked
+      // If not, then we will return the current_translate_value (aka stay where we are).
+      var last_thumbnail = $('.carousel-wbt-block__thumbnail', block).eq(-1);
+      var slider_right_edge = last_thumbnail.offset().left + last_thumbnail.outerWidth();
+      var wrapper = $('.carousel-wbt-block__thumbnail-wrapper');
+      var wrapper_right_edge = wrapper.offset().left + wrapper.outerWidth();
+
+      if (slider_right_edge > wrapper_right_edge) {
+        $('.carousel-wbt-block__thumbnail', slider).each(function(index, element) {
+          var thumbnail_left_edge = $(element).offset().left - slider_left_edge;
+          if (-thumbnail_left_edge < current_translate_value) {
+            position = -thumbnail_left_edge;
+            return false;
+          }
+        });
+      }
+    }
+
+    return position;
+  }
+
+  $('.carousel-wbt-block').each(function() {
+    var block = $(this);
+
+    // Set up click handlers to move the select image into the main content
+    $('.carousel-wbt-block__thumbnail', block).on('click', function() {
+      var filename = $(this).data('filename');
+      $('.carousel-wbt-block__slide.active, .carousel-wbt-block__thumbnail.active', block).removeClass('active');
+      $(".carousel-wbt-block__slide[data-filename='" + filename + "']", block).addClass('active');
+      $(this).addClass('active');
+    });
+
+    // Set up the carousel controls.
+    $('.js-cwbt-control-right', block).on('click', function() {
+      var offset = slide_thumbnails(block, 'right');
+      $('.js-thumbnail-slider', block).css('transform', 'translateX(' + offset + 'px)');
+    });
+    $('.js-cwbt-control-left', block).on('click', function() {
+      var offset = slide_thumbnails(block, 'left');
+      $('.js-thumbnail-slider', block).css('transform', 'translateX(-' + offset + 'px)');
+    });
+
+    resize_thumbnails(block);
+    $(window).on('resize orientationchange', function() {
+      resize_thumbnails(block);
+    });
+
+    airspace_show_active_item_in_lightbox(block);
+  });
+}
+
+function airspace_configure_mixed_media_carousel_blocks() {
+  $('.mixed-media-carousel-block').each(function() {
+    airspace_show_active_item_in_lightbox($(this));
+  });
+}
+
+function airspace_make_stats_block_panels_same_height(block) {
+  // Loop over all panels in the specified stats-block and find the tallest one.
+  var max_height = 0;
+
+  $('.stats-block__content__stat', block).each(function() {
+    if ($(this).outerHeight(true) > max_height) {
+      max_height = $(this).outerHeight(true);
+    }
+  });
+  $('.stats-block__content__stat', block).css('height', max_height);
+}
+
+function airspace_make_proper_number_of_stats_cards_show() {
+  $('.stats-block').each(function() {
+    var that = $(this);
+    airspace_make_stats_block_panels_same_height(that);
+
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      $('.carousel-item', that).addClass('active');
+    }
+    else if (window.matchMedia("(min-width: 768px)").matches) {
+      $('.carousel-item.active', that).removeClass('active');
+      $('.carousel-item:first-child', that).addClass('active');
+      that.on('slide.bs.carousel', function(e) {
+        var $e = $(e.relatedTarget);
+        var idx = $e.index();
+        var itemsPerSlide = 3;
+        var totalItems = $('.carousel-item', that).length;
+        var inner = $('.carousel-inner', that);
+
+        if (idx >= totalItems - (itemsPerSlide - 1)) {
+          var it = itemsPerSlide - (totalItems - idx);
+          for (var i = 0; i < it; i++) {
+            // append slides to end
+            if (e.direction == "left") {
+              $('.carousel-item', that).eq(i).appendTo(inner);
+            }
+            else {
+              $('.carousel-item', that).eq(0).appendTo(inner);
+            }
+          }
+        }
+      });
+    }
+  });
+}
+
+function airspace_configure_image_link_grid_carousel_block() {
+  // Duplicates all the content in the carousel into each individual carousel-item, such that Item 1 has the 1st, 2nd,
+  // 3rd, etc. columns' content, Item 2 has the 2nd, 3rd, 4th, etc. columns' content, and so on. This lets Bootstrap's
+  // default row/column CSS, plus the custom CSS in the image-link-grid-block.scss file, do its thing very easily.
+  $('.grid-carousel .carousel-item').each(function() {
+    var next = $(this).next();
+    if (!next.length) {
+      next = $(this).siblings(':first');
+    }
+    next.children(':first-child').clone().appendTo($(this));
+
+    for (var i = 0; i < 3; i++) {
+      next = next.next();
+      if (!next.length) {
+        next = $(this).siblings(':first');
+      }
+      next.children(':first-child').clone().appendTo($(this));
+    }
+  });
+}
+
+function airspace_configure_tabs_block() {
+  // By default, you can't deep-link to tabs in Bootstrap 4. This fixes that.
+  // Adapted from here: https://github.com/twbs/bootstrap/issues/25220#issuecomment-535915733
+  var url = window.location.href;
+  if (url.indexOf("#") > 0){
+    var fragment = url.substring(url.indexOf("#") + 1);
+    var active_tab = $('#' + fragment);
+    if (active_tab.hasClass('nav-link')) {
+      // The fragment matches a tab, so activate that tab.
+      active_tab.tab('show');
+    }
+    else {
+      // The fragment does not match a tab. Determine if it matches something that's a child of a tab.
+      // If so, activate that tab. The browser will scroll to the child for us.
+      var parent_tab_pane = $("[id=" + fragment + "]").closest('.tab-pane');
+      if (parent_tab_pane.length) {
+        var label = parent_tab_pane.attr('aria-labelledby');
+        $('#' + label).tab('show');
+      }
+    }
+  }
+
+  $('a[role="tab"]').on("click", function() {
+    const hash = $(this).attr("href");
+    // Add '-tab' to the end of the fragment, so that the browser jumps down to the tab set, instead of the tab content.
+    var new_url = url.split("#")[0] + hash + '-tab';
+    history.replaceState(null, null, new_url);
+  });
+}
+
+$(window.document).ready(function() {
+  airspace_configure_centered_image_carousel_blocks();
+  airspace_configure_image_carousel_blocks();
+  airspace_configure_image_carousel_header_blocks('.image-carousel-header');
+  airspace_configure_image_carousel_header_blocks('.sic-header__carousel');
+  airspace_configure_small_image_carousel_header_blocks('.sic-header');
+  airspace_configure_sidebar_menu_blocks();
+  airspace_configure_image_with_side_thumbnails_blocks();
+  airspace_configure_image_link_grid_carousel_block();
+  airspace_configure_carousel_with_bottom_thumbnails_blocks();
+  airspace_configure_mixed_media_carousel_blocks();
+  airspace_configure_tabs_block();
+  airspace_make_proper_number_of_stats_cards_show();
+  $(window).on('resize orientationchange', function() {
+    airspace_make_proper_number_of_stats_cards_show();
+  });
+});
