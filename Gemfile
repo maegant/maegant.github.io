@@ -1,4 +1,7 @@
 source 'https://rubygems.org'
+gem "minimal-mistakes-jekyll"
+
+
 group :jekyll_plugins do
     gem 'jekyll'
     gem 'jekyll-archives'
@@ -16,7 +19,7 @@ group :jekyll_plugins do
     gem 'mini_racer'
     gem 'unicode_utils'
     gem 'webrick'
-    gem "minimal-mistakes-jekyll"
+    gem 'kramdown-parser-gfm'
 end
 group :other_plugins do
     gem 'httparty'
