@@ -119,11 +119,28 @@ blockquote {
   background-color: var(--global-card-bg-color);
 
   img {
-    width: 100%;
+    @include breakpoint($small) {
+      max-height: 200px;
+    }
+
+    @include breakpoint($medium) {
+      max-height: 120px;
+    }
   }
 
   .card-title {
+    margin-top: 0.5em;
+    font-size: $type-size-5;
     color: var(--global-text-color);
+  }
+
+  .card-excerpt {
+    display: none;
+
+    @include breakpoint($medium) {
+      display: block;
+      font-size: $type-size-6;
+    }
   }
 
   .card-item {
@@ -495,7 +512,7 @@ footer.sticky-bottom {
 
     .row {
       display: grid;
-      // align-items: flex-end;;
+      // align-items: flex-end;
     }
   }
 
