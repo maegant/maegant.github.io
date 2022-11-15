@@ -31,14 +31,6 @@
 
   </picture>
 
-  {%- if include.overlay -%}
-    <figcaption class="overlay"><a href="{{ include.overlay-url }}">{{ include.overlay }}</a></figcaption>
-  {%- endif %}
-  {%- if include.caption -%}
-    <figcaption class="caption-">{{ include.caption }}</figcaption>
-  {%- endif %}
-
 </figure>
 
-
-
+{%- if include.caption -%}<figcaption class="caption-overlay">{{ include.caption }}</figcaption>{%- endif %}

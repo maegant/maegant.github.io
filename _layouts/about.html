@@ -2,6 +2,10 @@
 layout: default
 ---
 
+{% if page.header.image %}
+{%- include figure.html path=page.header.image alt="header image" width="100%" caption=page.header.caption -%}
+{% endif %}
+
 <!-- about.html -->
       <div class="post">
         <header class="post-header">
@@ -47,6 +51,10 @@ layout: default
           {% if page.selected_papers -%}
             <!-- Selected papers -->
             {%- include selected_papers.html %}
+          {%- endif %}
+          {% if page.recent_papers -%}
+            <!-- Recent papers -->
+            {%- include recent_papers.html %}
           {%- endif %}
           {%- if page.social %}
           <!-- Social -->
