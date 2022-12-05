@@ -44,13 +44,12 @@ children:
 
 <!-- _pages/publications.md -->
 <div class="publications">
-
 {%- for c in page.categories %}
-  <a id="Test">
-  <h2 class="year">{{c}}</h2>
-  {% bibliography -f papers -q @*[category={{c}}]* %}
-  </a>
-{% endfor %}
 
+  <h2 class="year">{{c}}</h2>
+  
+  {% bibliography -f papers -q @*[category={{c}}]* %}
+
+{% endfor %}
 </div>
 
