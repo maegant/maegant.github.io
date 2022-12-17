@@ -21,6 +21,15 @@ table {
   }
 }
 
+table.dark{
+  td, th {
+    color: white;
+  }
+  td {
+    font-size: 1rem;
+  }
+}
+
 a, table.table a {
   color: var(--global-theme-color);
   &:hover {
@@ -353,7 +362,7 @@ blockquote {
   padding: 0;
   border: 0;
   background-color: inherit;
-  color: var(--global-text-color);
+  color:  var(--global-text-color);
   &:hover {
     color: var(--global-hover-color);
   }
@@ -770,6 +779,35 @@ html.transition *:after {
   .post-content{
     blockquote {
       border-left: 5px solid var(--global-theme-color);
+      padding: 8px;
+    }
+  }
+}
+
+.post-monkeytype{
+  color: white; 
+  
+  .post-meta{
+    color: white;
+    font-size: 0.875rem;
+    margin-bottom: 0;
+  }
+  .post-tags{
+    color: white;
+    font-size: 0.875rem;
+    padding-top: 0.25rem;
+    padding-bottom: 1rem;
+    a {
+      color: white;
+      text-decoration: none;
+      &:hover {
+        color: var(--global-theme-color);
+      }
+    }
+  }
+  .post-content{
+    blockquote {
+      border-left: 5px solid white;
       padding: 8px;
     }
   }
