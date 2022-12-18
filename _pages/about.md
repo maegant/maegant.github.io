@@ -2,11 +2,10 @@
 layout: about
 title: about
 permalink: /
-subtitle: Caltech PhD Student studying human-robotic interaction and control of a lower-body exoskeleton.
+# subtitle: Incoming Assistant Professor at Georgia Tech (January 2024) and Caltech PhD Student studying human-robotic interaction and control of a lower-body exoskeleton.
 header:
   image: images/exo_demo_crop.jpg
 # <a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
-
 profile:
   align: right
   image: prof_pic.jpg
@@ -15,13 +14,12 @@ profile:
   #   <p>555 your office number</p>
   #   <p>123 your address street</p>
   #   <p>Your City, State 12345</p>
-
 news: false  # includes a list of news items
 recent_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hi, my name is Maegan Tucker. I'm currently a PhD candidate at Caltech, under the advisement of [Dr. Aaron Ames](http://ames.caltech.edu/). My research is centered around achieving stable and user-preferred locomotion on robotic assistive devices using formal methods from both **nonlinear control theory** and **machine learning**. My research has been supported by an [NSF Graduate Research Fellowship](https://www.nsfgrfp.org/) and the Caltech [RoAMS initiative](http://www.roams.caltech.edu/).
+Hi, my name is Maegan Tucker. I'm an <a href='https://twitter.com/maegan_tucker1/status/1602433014713098240'>incoming Assistant Professor</a> at Georgia Tech (starting January 2024) and currently a PhD candidate at Caltech, under the advisement of [Dr. Aaron Ames](http://ames.caltech.edu/). My research is centered around achieving stable and user-preferred locomotion on robotic assistive devices using formal methods from both **nonlinear control theory** and **machine learning**. My research has been supported by an [NSF Graduate Research Fellowship](https://www.nsfgrfp.org/) and the Caltech [RoAMS initiative](http://www.roams.caltech.edu/).
 
 <center>
 <a href="/research/" class="btn btn-sm z-depth-0" role="button">Research Overview</a>
