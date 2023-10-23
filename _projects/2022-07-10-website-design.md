@@ -29,7 +29,6 @@ Inside of my Github repository, I did the following to setup my website:
 2. Install RubyGems
   ```
   sudo gem update --system
-  ruby setup.rb --help
   ```
 
 3. Install GCC and Make
