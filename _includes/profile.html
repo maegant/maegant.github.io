@@ -1,0 +1,59 @@
+---
+layout: default
+---
+<link href="{{ site.baseurl }}/css/profile.css" rel="stylesheet">
+<div class="person-row row">
+    <div class="col-md-4 col-10 mx-auto person-info pt-4">
+        <div class="row">
+            <img
+            class="mx-auto d-block img-fluid avatar"
+            src="{{site.baseurl}}/images/people/{{page.avatar}}"
+            alt="{{page.name}}"
+            />
+        </div>
+        <div class="person-details row d-none d-md-flex">
+          {% include person-details.html %}
+        </div>
+    </div>
+    <div class="col-md-8 col-10 px-md-4 person-info pt-4">
+        <div class="row">
+          <h2 class="mb-1">{{ page.name }}</h2>
+        </div>
+
+          {% if page.degree %}
+          <div class="row">
+          <h5 class="degree">{{page.degree}}</h5>
+          </div>
+          {% endif %}
+
+         <div class="row">
+          <p class="profile contact">
+            <strong>Position: </strong>
+            {% include position_text.html position=page.position %}
+          </p>
+         </div>
+
+          {% if page.focus %}
+          <div class="row">
+            <p class="profile contact"><strong>Focus: </strong>{{page.focus}}</p>
+         </div>
+          {% endif %}
+          {% if page.projects %}
+          <div class="row">
+            <p class="profile contact"><strong>Projects: </strong>
+              {{page.projects}}
+            </p>
+         </div>
+          {% endif %}
+          <div class="row pt-4">
+          <h4>Bio:</h4>
+          </div>
+          <div class="row">
+          {{content}}
+          </div>
+
+          <div class="person-details row d-flex d-md-none">
+            {% include person-details.html %}
+          </div>
+        </div>
+  </div>

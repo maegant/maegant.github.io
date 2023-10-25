@@ -1,0 +1,22 @@
+<div class="list-item-people">
+    <p class="list-post-title">
+        <!-- <a href="{{site.baseurl}}{{person.url}}"> -->
+            <img
+                class="profile-thumbnail"
+                {% if person.avatar %}
+                    src="{{site.baseurl}}/images/people/{{person.avatar}}">
+                {% else %}
+                    src="{{site.baseurl}}/images/people/buzzplaceholder.jpg">
+                {% endif %}
+        <!-- </a> -->
+        <!-- <a class="name" href="{{site.baseurl}}{{person.url}}" target="_blank"> -->
+            <br>
+            <b>{{person.name}}</b>
+        <!-- </a> -->
+    </p>
+    <p class="list-post-extra">
+        {% include position_text.html position=include.position %}
+    </p>
+    <!-- <hr class="list-post-extra"> -->
+    <p class="list-post-extra">{{person.focus}}</p>
+</div>

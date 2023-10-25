@@ -722,6 +722,159 @@ footer.sticky-bottom {
   }
 }
 
+// Group
+.people {
+  margin: auto;
+  text-align: center;
+  margin-top: 0.75em;
+}
+
+.list-item-people {
+  display: inline-block;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+  padding-bottom: 1.5em;
+  vertical-align: top;
+}
+
+.list {
+  &-post-title {
+    margin-bottom: .25rem;
+
+    a {
+      color: #333;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+  }
+  &-post-date {
+    margin-bottom: 1rem;
+    font-size: .75rem;
+    text-transform: uppercase;
+  }
+}
+
+.profile-thumbnail {
+  object-fit: cover;
+  object-position: center top;
+  width: 200px;
+  height: 200px;
+}
+
+.pi-thumbnail {
+  object-fit: contain;
+  object-position: center top;
+  width: 350px;
+  height: 200px;
+}
+
+.list-item-group-description {
+  display: inline-block;
+
+  .people-list-info{
+    font-size: 18px;
+  }
+
+  @media (min-width: 992px) {
+      .people-list-info{
+          font-size: 18px !important;
+      }
+  }
+
+}
+
+.list-post-title img {
+  margin-bottom: 0.75em;
+  margin-top: 1.25em;
+}
+
+.list-post-title .name {
+  color: black;
+  font-size: 18px;
+}
+
+.list-post-title {
+  color: black;
+}
+
+.list-post-extra {
+  font-size: 16px;
+  margin: 0px;
+  padding: 0px;
+  width: 200px;
+}
+
+.list-detail {
+  font-size: 15px;
+  color: #838383;
+}
+
+.list-item a:hover, .list-post-title:hover .name, .list-post-title .name:hover {
+  color: #ccc;
+
+}
+
+.people-starter {
+  text-align: center;
+}
+
+.people-starter > p {
+  display: inline-block;
+  margin: 1.4rem auto 2.1rem auto;
+  font-weight: 400;
+  font-size: 1.0rem;
+  font-family: monospace;
+  padding: 2.1rem 1.4rem;
+  border-top: 1.3px solid #eee;
+  border-bottom: 1.3px solid #eee;
+}
+
+.people-starter > i {
+  font-size: 2.9rem;
+  display: block;
+  margin-top: 1.3rem;
+}
+
+.people-title {
+  padding-top: 1.6rem;
+}
+
+.people-title > h3::before {
+  margin: 0;
+  color: white;
+}
+
+.people-group {
+  border-top: 0.05rem solid #ccc;
+  border-bottom: 0.05rem solid #ccc;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.people-list-info > a {
+  color: #515151;
+}
+
+.people-list-info > span {
+  font-weight: 500;
+}
+
+@media (min-width:1560px) {
+  .person-row .img-fluid {
+    max-width: 400px;
+  }
+}
+
+.person-info {
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
 // Rouge Color Customization
 figure.highlight {
   margin: 0 0 1rem;

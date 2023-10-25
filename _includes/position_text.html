@@ -1,0 +1,18 @@
+{% case {{include.position}} %}
+    {% when "researchengineer" %}
+        Research Engineer
+    {% when "gradstudent" %}
+        Graduate Student
+    {% when "postdoc" %}
+        Postdoctoral Scholar
+    {% when "phd" %}
+        PhD Candidate
+    {% when "pi" %}
+        Principal Investigator
+    {% when "undergrad" %}
+        Undergraduate Student
+    {% when "alumni" %}
+        Lab Alumnus
+    {% else %}
+    ---
+{% endcase %}
