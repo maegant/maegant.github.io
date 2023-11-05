@@ -25,9 +25,18 @@
     display : block;
   }
 
+  .image-light {
+    display: inline;
+  }
+
+  .image-dark {
+    display: none;
+  }
+
   .repo-img-light {
     display: block;
   }
+
   .repo-img-dark {
     display: none;
   }
@@ -54,6 +63,14 @@ html[data-theme='dark'] {
   }
   .fa-moon {
     display : none;
+  }
+  
+  .image-light {
+    display: none;
+  }
+
+  .image-dark {
+    display: inline;
   }
 
   .repo-img-light {

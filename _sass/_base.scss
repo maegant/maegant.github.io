@@ -4,7 +4,7 @@
 
 // Typography
 
-p, h1, h2, h3, h4, h5, h6, em, div, li, span, strong {
+p, b, h1, h2, h3, h4, h5, h6, em, div, li, span, strong {
   color: var(--global-text-color);
 }
 
@@ -773,6 +773,7 @@ footer.sticky-bottom {
 
 .group-description {
   text-align: center;
+  justify-content: center;
 
   .image {
     max-width: 100%; /* Set a maximum width for the image */
@@ -836,13 +837,13 @@ footer.sticky-bottom {
   margin-top: 1.25em;
 }
 
-.list-post-title .name {
-  color: black;
-  font-size: 18px;
-}
+// .list-post-title .name {
+//   color: var(--global-text-color);
+//   font-size: 18px;
+// }
 
 .list-post-title {
-  color: black;
+  color: var(--global-text-color);
 }
 
 .list-post-extra {
@@ -854,12 +855,11 @@ footer.sticky-bottom {
 
 .list-detail {
   font-size: 15px;
-  color: #838383;
+  // color: #838383;
 }
 
 .list-item a:hover, .list-post-title:hover .name, .list-post-title .name:hover {
-  color: #ccc;
-
+  color: var(--global-hover-color);
 }
 
 .people-starter {
@@ -873,8 +873,8 @@ footer.sticky-bottom {
   font-size: 1.0rem;
   font-family: monospace;
   padding: 2.1rem 1.4rem;
-  border-top: 1.3px solid #eee;
-  border-bottom: 1.3px solid #eee;
+  // border-top: 1.3px solid #eee;
+  // border-bottom: 1.3px solid #eee;
 }
 
 .people-starter > i {
@@ -889,7 +889,7 @@ footer.sticky-bottom {
 
 .people-title > h3::before {
   margin: 0;
-  color: white;
+  // color: white;
 }
 
 .people-group {
