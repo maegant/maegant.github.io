@@ -6,7 +6,7 @@ title: blank # the website title (if blank, full name will be used instead)
 first_name: Maegan
 middle_name: 
 last_name: Tucker
-# email: mtucker@caltech.edu  
+# email: mtucker@gatech.edu  
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   Personal website of Maegan Tucker
 footer_text: >
@@ -301,7 +301,7 @@ jekyll-diagrams:
 # -----------------------------------------------------------------------------
 
 enable_google_analytics:    true  # enables google analytics
-enable_panelbear_analytics: false  # enables panelbear analytics
+enable_panelbear_analytics: true  # enables panelbear analytics
 enable_google_verification: false  # enables google site verification
 enable_bing_verification:   false  # enables bing site verification
 enable_masonry:             true   # enables automatic project cards arangement

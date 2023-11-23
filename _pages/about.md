@@ -23,7 +23,7 @@ Hi, my name is Maegan Tucker. I'm an <a href='https://twitter.com/maegan_tucker1
 <!-- My research has been supported by an [NSF Graduate Research Fellowship](https://www.nsfgrfp.org/). -->
 Aside from my research, I am deeply passionate about furthering DEI efforts within the robotics community. 
 <!-- Towards this, I was involved in several Caltech DEI efforts such as [Future Ignited](https://sfp.caltech.edu/diversity-equity-and-inclusion-programs/futures-ignited), [Freshman Summer Research Institute (FSRI)](https://diversity.caltech.edu/programs-training/freshman-summer-research-institute-fsri), and [Rise Tutoring](https://www.caltechy.org/rise-tutor).  -->
-If you are interested in discussing either my research, please reach out at ``mtucker@caltech.edu``!
+If you are interested in discussing either my research, please reach out at ``mtucker@gatech.edu``!
 
 <center>
 <a href="/research/" class="btn btn-sm z-depth-0" role="button">Research Overview</a>
