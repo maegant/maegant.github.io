@@ -19,8 +19,9 @@ group :jekyll_plugins do
     gem 'unicode_utils'
     gem 'webrick'
     gem 'kramdown-parser-gfm'
-    gem 'therubyracer'
     gem 'execjs'
+    gem 'csv'
+    gem 'observer'
 end
 group :other_plugins do
     gem 'httparty'

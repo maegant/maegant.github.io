@@ -19,7 +19,7 @@ recent_papers: true # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hi, my name is Maegan Tucker. I'm an <a href='https://twitter.com/maegan_tucker1/status/1602433014713098240'>incoming Assistant Professor</a> at Georgia Tech (starting January 2024). My research is centered around achieving stable and user-preferred locomotion using formal methods from both **nonlinear control theory** and **machine learning**, with specific applications towards **robotic assistive devices**. 
+Hi, my name is Maegan Tucker. I'm an <a href='https://research.gatech.edu/maegan-tucker'>Assistant Professor</a> at Georgia Tech (started January 2024). My research is centered around achieving stable and user-preferred locomotion using formal methods from both **nonlinear control theory** and **machine learning**, with specific applications towards **robotic assistive devices**. 
 <!-- My research has been supported by an [NSF Graduate Research Fellowship](https://www.nsfgrfp.org/). -->
 Aside from my research, I am deeply passionate about furthering DEI efforts within the robotics community. 
 <!-- Towards this, I was involved in several Caltech DEI efforts such as [Future Ignited](https://sfp.caltech.edu/diversity-equity-and-inclusion-programs/futures-ignited), [Freshman Summer Research Institute (FSRI)](https://diversity.caltech.edu/programs-training/freshman-summer-research-institute-fsri), and [Rise Tutoring](https://www.caltechy.org/rise-tutor).  -->
