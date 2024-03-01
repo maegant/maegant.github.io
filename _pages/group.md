@@ -7,87 +7,14 @@ nav: true
 nav_order: 2
 ---
 
-<!-- ## Lab Members -->
-
-{% assign all_people = site.people %}
-
-{% assign all_roles = 'Research Team' | split: '|'  %}
-
-{% for role in all_roles %}
-
-  {% assign people_for_role = all_people | where: 'position',role %}
-
-
-  <!-- <div class="people-title top">
-    <h3>Principal Investigator</h3>
-  </div> -->
-
+<div class="justify-content-center">
+  <div class="group-description">
+  <img src="{{site.baseurl}}/images/dynamicmobility/dm_logo3.png" alt="Dynamic Mobility Lab Logo" class="image image-light">
+  <img src="{{site.baseurl}}/images/dynamicmobility/dm_logo3_white.png" alt="Dynamic Mobility Lab Logo" class="image image-dark">
   <div class="justify-content-center">
-  {% include dynamicmobility.html %}
+  <br><br>
+    To learn more about the Dynamic Mobility lab, visit our <a href="https://dynamicmobility.github.io/" target="_blank"> Lab Website </a>
   </div>
-
-  <hr class="people-group">
-
-  <div class="people-title">
-    <h3>Research Team</h3>
   </div>
-
-  <div class="content list people">
-
-    {% for person in all_people %}
-      {% if person.position == 'researchengineer' %}
-        {% include person.html position=person.position %}
-      {% endif %}
-    {% endfor %}
-
-    {% for person in all_people %}
-      {% if person.position == 'postdoc' %}
-        {% include person.html position=person.position %}
-      {% endif %}
-    {% endfor %}
-
-    {% for person in all_people %}
-      {% if person.position == 'phd' %}
-        {% include person.html position=person.position %}
-      {% endif %}
-    {% endfor %}
-
-    {% for person in all_people %}
-      {% if person.position == 'gradstudent' %}
-        {% include person.html position=person.position %}
-      {% endif %}
-    {% endfor %}
-
-    {% for person in all_people %}
-      {% if person.position == 'undergrad' %}
-        {% include person.html position=person.position %}
-      {% endif %}
-    {% endfor %}
-
-    {% for person in all_people %}
-      {% if person.position == 'affiliate' %}
-        {% include person.html position=person.position %}
-      {% endif %}
-    {% endfor %}
-
-  </div>
-
-
- <hr class="people-group">
-
- <!-- <div class="people-title mb-3">
-    <h3>Alumni</h3>
- </div> -->
-
-  <!-- <div class="content list people"> -->
-	
-  {% for person in all_people %}
-      {% if person.position == 'alumni' %}
-        {% include alumni.html position=person.position %}
-      {% endif %}
-    {% endfor %}
-  <!-- </div> -->
-
-{% endfor %}
-<br>
+</div>
 
