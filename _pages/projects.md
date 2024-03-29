@@ -1,11 +1,11 @@
 ---
 layout: page
-title: misc
-permalink: /projects/
+title: fun
+permalink: /fun-projects/
 description: A growing collection of various non-research projects, ordered in reverse chronological order and separated into class projects, undergraduate experiences, and simply fun side projects.
 nav: true
-nav_order: 3
-display_categories: [class, fun, undergraduate]
+nav_order: 5
+display_categories: [course projects, misc, undergraduate activities]
 horizontal: false
 ---
 

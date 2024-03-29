@@ -1,7 +1,7 @@
 ---
 title: "Prosthesis Design"
 layout: page
-category: undergraduate
+category: undergraduate activities
 description: "Undergraduate research involving a transfemoral prosthesis at Georgia Tech."
 img: images/portfolio/metabolic/device-400x200.png
 # tags: 

@@ -1,7 +1,7 @@
 ---
 title: "LQR Recitation"
 layout: page
-category: class
+category: course projects
 description: "Lecture notes for my recitation on LQR as a TA for CDS 131"
 img: images/lqr_recitation.png
 category: Teaching

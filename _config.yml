@@ -66,6 +66,7 @@ og_image: # The site-wide (default for all links) Open Graph preview image
 # Social integration
 # -----------------------------------------------------------------------------
 
+lab_website: https://dynamicmobility.github.io/ # lab website (custom icomoon icon)
 github_username: maegant
 gitlab_username: # your GitLab user name
 twitter_username: # maegan_tucker1

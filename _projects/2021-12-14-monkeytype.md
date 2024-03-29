@@ -1,7 +1,7 @@
 ---
 title: "Monkeytype"
 layout: page-monkeytype
-category: fun
+category: misc
 img: images/portfolio/monkeytype.png
 description: "Typing Speed Test"
 # tags: 
