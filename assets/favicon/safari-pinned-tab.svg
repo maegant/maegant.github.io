@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="124.15146mm"
+   height="124.15146mm"
+   viewBox="0 0 124.15146 124.15146"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   sodipodi:docname="safari-pinned-tab.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.57753716"
+     inkscape:cx="131.59326"
+     inkscape:cy="361.01573"
+     inkscape:window-width="1512"
+     inkscape:window-height="916"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(44.125389,16.253952)">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:0.274102"
+       id="rect1"
+       width="124.15146"
+       height="124.15146"
+       x="-44.223"
+       y="-16.37319"
+       ry="3.2807603" />
+    <text
+       xml:space="preserve"
+       style="font-size:91.8128px;font-family:'Heiti SC';-inkscape-font-specification:'Heiti SC, Normal';text-align:center;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke-width:0.264999"
+       x="15.118073"
+       y="78.339119"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Roboto;-inkscape-font-specification:Roboto;fill:#ffffff;fill-opacity:1;stroke-width:0.265"
+         x="15.118071"
+         y="78.339119">MT</tspan></text>
+  </g>
+</svg>
