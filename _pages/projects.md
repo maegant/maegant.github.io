@@ -9,7 +9,7 @@ horizontal: false
 ---
 
 <div class="justify-content-center">
-    A growing collection of various non-research projects.
+    A growing collection of various non-research stuff.
 <div class="justify-content-center">
 
 
