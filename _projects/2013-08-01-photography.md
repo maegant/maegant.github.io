@@ -1,7 +1,7 @@
 ---
 title: "Photography"
 layout: page
-category: misc
+category: fun
 description: "Photos taken during undergraduate study abroad"
 img: images/portfolio/photos/preview.jpg
 gallery:

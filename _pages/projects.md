@@ -1,13 +1,17 @@
 ---
 layout: page
-title: fun
-permalink: /fun-projects/
-description: A growing collection of various non-research projects, ordered in reverse chronological order and separated into class projects, undergraduate experiences, and simply fun side projects.
+title: etc
+permalink: /etc/
 nav: true
 nav_order: 5
-display_categories: [course projects, misc, undergraduate activities]
+display_categories: [resources, fun, course projects, undergraduate activities]
 horizontal: false
 ---
+
+<div class="justify-content-center">
+    A growing collection of various non-research projects.
+<div class="justify-content-center">
+
 
 <!-- pages/projects.md -->
 
@@ -20,13 +24,24 @@ horizontal: false
   {%- assign sorted_projects = categorized_projects | sort: "date" | reverse %}
   <!-- Generate cards for each project -->
   {% if page.horizontal -%}
+  
   <div class="container">
-    <div class="row row-cols-1">
-    {%- for project in sorted_projects -%}
-      {% include projects_horizontal.html %}
-    {%- endfor %}
-    </div>
+  {%- for project in sorted_projects -%}
+    <article class="project">
+      {% if project.img %}"
+           <a class="project-thumbnail" style="background-image: src="{{ project.img | relative_url }} href="{{project.url | prepend: site.baseurl}}"></a>
+      {% else %}
+      {% endif %}
+      <div class="project-content">
+        <h2 class="project-title"><a href="{{project.url | prepend: site.baseurl}}">{{project.title}}</a></h2>
+        <p>{{ project.description | strip_html | truncatewords: 15 }}</p>
+        <!-- <span class="project-date">{{project.date | date: '%Y, %b %d'}}&nbsp;&nbsp;&nbsp;—&nbsp;</span> -->
+        <!-- <span class="project-words">{% capture words %}{{ project.content | number_of_words }}{% endcapture %}{% unless words contains "-" %}{{ words | plus: 250 | divided_by: 250 | append: " minute read" }}{% endunless %}</span> -->
+      </div>
+    </article>
+  {%- endfor %}
   </div>
+
   {%- else -%}
   <div class="grid">
     {%- for project in sorted_projects -%}

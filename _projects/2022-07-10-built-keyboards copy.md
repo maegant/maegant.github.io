@@ -1,7 +1,7 @@
 ---
 title: "Mechanical Keyboards"
 layout: page
-category: misc
+category: fun
 img: images/portfolio/other_keyboards/lily58.jpg
 description: "Designed and Prototyped from Scratch"
 # tags: 

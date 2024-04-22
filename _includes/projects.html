@@ -1,12 +1,12 @@
 <!-- _includes/projects.html -->
 <div class="grid-sizer"></div>
-  <div class="grid-item"> <!--archive__item-->
+  <div class="grid-item"> 
     {% if project.redirect -%}
     <a href="{{ project.redirect }}">
       {%- else -%}
       <a href="{{ project.url | relative_url }}">
         {%- endif %}
-        <div class="card hoverable"><!--archive_item-teaser-->
+        <div class="card hoverable h-100">
           {%- if project.img %}
           {%- include projects-teaser.html
             path=project.img
@@ -14,7 +14,7 @@
           {%- endif %}
           <div class="card-body">
             <h2 class="card-title">{{ project.title }}</h2>
-            <p class="card-excerpt">{{ project.description }}</p>
+            <p class="card-excerpt">{{ project.description | strip_html | truncatewords: 10 }}</p>
             <div class="row ml-1 mr-1 p-0">
               {%- if project.github -%}
               <div class="github-icon">
