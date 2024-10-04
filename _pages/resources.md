@@ -1,10 +1,10 @@
 ---
 layout: page
-title: etc
-permalink: /etc/
+title: resources
+permalink: /resources/
 nav: true
-nav_order: 5
-display_categories: [resources, fun, course projects, undergraduate activities]
+nav_order: 3
+display_categories: [resources, fun]
 horizontal: false
 ---
 

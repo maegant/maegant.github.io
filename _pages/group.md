@@ -1,10 +1,11 @@
 ---
 layout: default
-permalink: /research/
+external_url: https://dynamicmobility.github.io/publications/
+external_flag: true
 title: research
 description:  
 nav: true
-nav_order: 3
+nav_order: 4
 ---
 
 

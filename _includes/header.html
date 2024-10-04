@@ -83,7 +83,13 @@
                   {% endfor %}
                 </div>
               </li>
-              {%- else %}
+              {%- elsif p.external_flag -%}
+              <li class="nav-item dropdown {% if page.title == p.title %}active{% endif %}"></li>
+                <a class="nav-link" href="{{ p.external_url }}" rel="noopener noreferrer">{{ p.title }}
+                  <span class="sr-only">Test</span>
+                </a>
+              </li>
+              {%- else -%}
               <li class="nav-item {% if page.title == p.title %}active{% endif %}">
                 <a class="nav-link" href="{{ p.url | relative_url }}">{{ p.title }}
                   {%- if page.title == p.title -%}
@@ -94,6 +100,8 @@
               {%- endif -%}
               {%- endif -%}
               {% endfor -%}
+              
+
               {%- if site.enable_darkmode %}
 
               <!-- Toogle theme mode -->
