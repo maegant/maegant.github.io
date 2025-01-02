@@ -2,11 +2,32 @@
 layout: page
 permalink: /teaching/
 title: teaching
-description: Materials for courses you taught. Replace this text with your description.
-nav: false
-nav_order: 5
+nav: true
+nav_order: 4
 ---
 
-For now, this page is assumed to be a static description of your courses. You can convert it to a collection similar to `_projects/` so that you can have a dedicated page for each course.
-
-Organize your courses by years, topics, or universities, however you like!
+<html>
+    <div class="post">
+        <header class="post-header">
+            <h2 class="post-title">Teaching</h2>
+        </header>
+        <p>The following are courses that I've taught at Georgia Tech. </p>
+    </div>
+    <table style="width: 100%;">
+        <tr>
+            <th>Course</th>
+            <th>Name</th>
+            <th>Semester</th>
+        </tr>
+        <tr>
+            <td><a href="">ECE 4560</a></td>
+            <td>Introduction to Robotics and Automation</td>
+            <td>Fa24</td>
+        </tr>
+        <tr>
+            <td><a href="">ME 6402</a></td>
+            <td>Nonlinear Control Systems</td>
+            <td>Sp25</td>
+        </tr>
+    </table>
+</html>
