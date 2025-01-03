@@ -24,7 +24,7 @@ nav_order: 4
             <td>Introduction to Robotics and Automation</td>
             <td>Fa24</td>
             </tr>    <tr>
-            <td><a href="">ME 6402</a></td>
+            <td><a href="https://maegantucker.com/ME6402/" target="_self">ME 6402</a></td>
             <td>Nonlinear Control Systems</td>
             <td>Sp25</td>
         </tr>
