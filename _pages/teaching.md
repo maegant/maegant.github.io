@@ -20,11 +20,10 @@ nav_order: 4
             <th>Semester</th>
         </tr>
         <tr>
-            <td><a href="">ECE 4560</a></td>
+            <td><a href="https://maegantucker.com/ECE4560/" target="_self">ECE 4560</a></td>
             <td>Introduction to Robotics and Automation</td>
             <td>Fa24</td>
-        </tr>
-        <tr>
+            </tr>    <tr>
             <td><a href="">ME 6402</a></td>
             <td>Nonlinear Control Systems</td>
             <td>Sp25</td>
