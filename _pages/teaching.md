@@ -22,7 +22,7 @@ nav_order: 4
         <tr>
             <td><a href="https://maegantucker.com/ECE4560/" target="_self">ECE 4560</a></td>
             <td>Introduction to Robotics and Automation</td>
-            <td>Fa24</td>
+            <td>Fa24, Fa25</td>
             </tr>    <tr>
             <td><a href="https://maegantucker.com/ME6402/" target="_self">ME 6402</a></td>
             <td>Nonlinear Control Systems</td>
