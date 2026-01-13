@@ -24,6 +24,10 @@ nav_order: 4
             <td>Introduction to Robotics and Automation</td>
             <td>Fa24, Fa25</td>
             </tr>    <tr>
+            <td><a href="https://maegantucker.com/ECE6552/" target="_self">ECE 6552</a></td>
+            <td>Nonlinear Systems and Control</td>
+            <td>Sp26</td>
+            </tr>    <tr>
             <td><a href="https://maegantucker.com/ME6402/" target="_self">ME 6402</a></td>
             <td>Nonlinear Control Systems</td>
             <td>Sp25</td>
